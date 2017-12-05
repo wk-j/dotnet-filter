@@ -20,4 +20,7 @@ dotnet test src/DotNetFilter.IntegrateTests --filter "FullyQualifiedName~Tests.M
 
 # Nested module
 dotnet test src/DotNetFilter.Tests --filter "FullyQualifiedName~Tests+X+Y+Z.My test 2"
+
+dotnet run --project src/DotNetFilter /Users/wk/Source/DotNetFilter/src/DotNetFilter.Tests/bin/Debug/netcoreapp2.0/DotNetFilter.Tests.dll
+dotnet-filter /Users/wk/Source/DotNetFilter/src/DotNetFilter.Tests/bin/Debug/netcoreapp2.0/DotNetFilter.Tests.dll
 ```
