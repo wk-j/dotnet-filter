@@ -17,7 +17,3 @@ Task("Zip")
 
 var target = Argument("target", "default");
 RunTarget(target);
-
-/* 
-cake build.cake -target=Zip
-*/
