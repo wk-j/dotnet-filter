@@ -1,28 +1,39 @@
-﻿open System.Reflection
+﻿namespace DotNetFilter 
 
-let getTestMethods(dll) = 
-    let asm = Assembly.LoadFile(dll)
-    query {
-        for types in asm.GetTypes() do
-        for method in types.GetMethods() do
-        for attribute in method.GetCustomAttributes() do
-        where (attribute.GetType().Name = "FactAttribute")
-        select (types, method)
-    }
+open System.Reflection
+open DotNetFilter.Dll
 
-let returnZero f = 
-    try f(); 0
-    with | _ -> -1
+module Program = 
 
-[<EntryPoint>]
-let main argv =
-    let start() = 
-        if argv.Length = 1 then
-            let dll = argv.[0]
-            let tests = getTestMethods dll
-            for (types, method) in tests do
-                printfn "%s.%s" (types.FullName) (method.Name)
-        else
-            printfn "-- invalid argument"
+    let getTestMethods(dll) = 
+        let asm = Assembly.LoadFile(dll)
+        query {
+            for types in asm.GetTypes() do
+            for method in types.GetMethods() do
+            for attribute in method.GetCustomAttributes() do
+            where (attribute.GetType().Name = "FactAttribute")
+            select (types, method)
+        } |> Seq.toList
 
-    returnZero start
+    let returnZero f = 
+        try f(); 0
+        with 
+            | ex -> 
+                printfn "-- error | %A" ex.Message
+                printfn "-- stack | %A" ex.StackTrace
+                -1
+
+    [<EntryPoint>]
+    let main argv =
+        let start() = 
+            if argv.Length = 1 then
+                let dll = argv.[0]
+                Dll.init dll
+
+                let tests = getTestMethods dll
+                for (types, method) in tests do
+                    printfn "%s.%s" (types.FullName) (method.Name)
+            else
+                printfn "-- invalid argument"
+
+        returnZero start
